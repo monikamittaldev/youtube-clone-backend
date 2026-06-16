@@ -1,8 +1,8 @@
 /* =========================================================================
    auth.routes.js - Authentication Routing Configuration
    ========================================================================= */
-import { register, login, getMe } from "../controller/auth.controller.js";
-import protect from "../middleware/auth.js";
+import { register, login, getMe } from "../controllers/auth.controller.js"
+import protect from "../middleware/authMiddleware.js";
 
 export function authRoutes(app) {
   // Register new user

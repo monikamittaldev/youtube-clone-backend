@@ -10,7 +10,7 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import { authRoutes } from "./routes/auth.routes";
+import { authRoutes } from "./routes/auth.routes.js";
 
 // Create an Express application instance
 const app = express();
