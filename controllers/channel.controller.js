@@ -96,6 +96,13 @@ export const updateChannel = async (req, res) => {
   try {
     const { channelName, description, channelAvatar, channelBanner } = req.body;
 
+    if (!channelName && !description && !channelAvatar && !channelBanner) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one field is required for update",
+      });
+    }
+
     // Find channel
     const channel = await Channel.findById(req.params.id);
     if (!channel) {
@@ -117,7 +124,7 @@ export const updateChannel = async (req, res) => {
     const updatedChannel = await Channel.findByIdAndUpdate(
       req.params.id,
       { channelName, description, channelAvatar, channelBanner },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json({

@@ -3,6 +3,10 @@
    Built with Node.js, Express & MongoDB
    ========================================================================= */
 
+import "./models/user.model.js";
+import "./models/video.model.js";
+import "./models/channel.model.js";
+
 import dotenv from "dotenv";
 // Initialize dotenv at the absolute top so variables are available everywhere
 dotenv.config();
@@ -11,6 +15,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import { authRoutes } from "./routes/auth.routes.js";
+import { channelRoutes } from "./routes/channel.routes.js";
 
 // Create an Express application instance
 const app = express();
@@ -42,6 +47,7 @@ db.on("error", (err) => {
 });
 
 authRoutes(app);
+channelRoutes(app);
 
 /* =========================================================================
    2. START THE SERVER
