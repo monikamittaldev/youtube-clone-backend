@@ -10,6 +10,7 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import { authRoutes } from "./routes/auth.routes";
 
 // Create an Express application instance
 const app = express();
@@ -40,6 +41,7 @@ db.on("error", (err) => {
   console.error("❌ Youtube Clone Database connection failed:", err);
 });
 
+authRoutes(app);
 
 /* =========================================================================
    2. START THE SERVER
