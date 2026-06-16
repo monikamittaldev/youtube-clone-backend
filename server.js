@@ -16,6 +16,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { authRoutes } from "./routes/auth.routes.js";
 import { channelRoutes } from "./routes/channel.routes.js";
+import { videoRoutes } from "./routes/video.routes.js";
 
 // Create an Express application instance
 const app = express();
@@ -48,7 +49,7 @@ db.on("error", (err) => {
 
 authRoutes(app);
 channelRoutes(app);
-
+videoRoutes(app);
 /* =========================================================================
    2. START THE SERVER
    ========================================================================= */
