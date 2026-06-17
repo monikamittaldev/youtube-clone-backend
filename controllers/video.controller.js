@@ -4,7 +4,7 @@
    ========================================================================= */
 import Video from "../models/video.model.js";
 import Channel from "../models/channel.model.js";
-
+import User from "../models/user.model.js";
 /* =========================================================================
    GET ALL VIDEOS - GET /api/videos
    Supports ?search= and ?category= query params
@@ -50,7 +50,7 @@ export const getVideoById = async (req, res) => {
     const video = await Video.findByIdAndUpdate(
       req.params.id,
       { $inc: { views: 1 } },
-      { new: true }
+      { new: true },
     ).populate("channelId", "channelName channelAvatar handle");
 
     if (!video) {
@@ -68,6 +68,72 @@ export const getVideoById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
+    });
+  }
+};
+
+/* =========================================================================
+   UPLOAD VIDEO - POST /api/videos
+   ========================================================================= */
+export const uploadVideo = async (req, res) => {
+  try {
+    const { title, description, thumbnailUrl, videoUrl, channelId, category } =
+      req.body;
+
+    // Validate required fields
+    if (!title || !videoUrl || !channelId) {
+      return res.status(400).json({
+        success: false,
+        message: "Title, video URL and channel are required",
+      });
+    }
+
+    // Verify channel ownership
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({
+        success: false,
+        message: "Channel not found",
+      });
+    }
+
+    if (channel.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to upload to this channel",
+      });
+    }
+
+    // fetch user to get username
+    const user = await User.findById(req.user.id);
+
+    // Create video
+    const video = await Video.create({
+      title,
+      description,
+      thumbnailUrl,
+      videoUrl,
+      channelId,
+      uploader: req.user.id,
+      uploaderName: user.username,
+      category: category || "All",
+    });
+
+    // Add video to channel
+    await Channel.findByIdAndUpdate(channelId, {
+      $push: { videos: video._id },
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Video uploaded successfully",
+      video,
+    });
+  } catch (error) {
+    const msg = "server error: " + error;
+    res.status(500).json({
+      success: false,
+      message: msg,
     });
   }
 };
