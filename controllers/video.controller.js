@@ -137,3 +137,44 @@ export const uploadVideo = async (req, res) => {
     });
   }
 };
+
+export const updateVideo = async (req, res) => {
+  try {
+    const { title, description, thumbnailUrl, videoUrl, category } = req.body;
+
+    // Find Video
+    const video = await Video.findById(req.params.id);
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    //Check Ownership
+    if (video.uploader.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this video",
+      });
+    }
+    //Update Video
+    const updatedVideo = await Video.findByIdAndUpdate(
+      req.params.id,
+      { title, description, thumbnailUrl, videoUrl, category },
+      { new: true, runValidators: true },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Video updated successfully",
+      video: updatedVideo,
+    });
+  } catch (error) {
+    const msg = "server error: " + error;
+    res.status(500).json({
+      success: false,
+      message: msg,
+    });
+  }
+};
