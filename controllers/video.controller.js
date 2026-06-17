@@ -14,15 +14,14 @@ export const getAllVideos = async (req, res) => {
     const { search, category } = req.query;
     let query = {};
 
-    // Filter by title search
     if (search) {
+      // If search text exists — filter by title only
       query.title = { $regex: search, $options: "i" };
-    }
-
-    // Filter by category
-    if (category && category !== "All") {
+    } else if (category && category !== "All") {
+      // If no search — filter by category only
       query.category = category;
     }
+    // If neither — return all videos
 
     const videos = await Video.find(query)
       .populate("channelId", "channelName channelAvatar handle")
@@ -40,7 +39,6 @@ export const getAllVideos = async (req, res) => {
     });
   }
 };
-
 /* =========================================================================
    GET SINGLE VIDEO - GET /api/videos/:id
    Also increments view count
@@ -179,7 +177,6 @@ export const updateVideo = async (req, res) => {
   }
 };
 
-
 /* =========================================================================
    DELETE VIDEO - DELETE /api/videos/:id
    ========================================================================= */
@@ -213,6 +210,83 @@ export const deleteVideo = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Video deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error: " + error,
+    });
+  }
+};
+
+/* =========================================================================
+   LIKE VIDEO - POST /api/videos/:id/like
+   ========================================================================= */
+export const likeVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const userId = req.user.id;
+    const alreadyLiked = video.likes.includes(userId);
+
+    if (alreadyLiked) {
+      video.likes.pull(userId);
+    } else {
+      video.likes.push(userId);
+      video.dislikes.pull(userId);
+    }
+    await video.save();
+    res.status(200).json({
+      success: true,
+      likes: video.likes.length,
+      dislikes: video.dislikes.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error: " + error,
+    });
+  }
+};
+
+
+/* =========================================================================
+   DISLIKE VIDEO - POST /api/videos/:id/dislike
+   ========================================================================= */
+export const dislikeVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const userId = req.user.id;
+    const alreadyDisliked = video.dislikes.includes(userId);
+
+    if (alreadyDisliked) {
+      // Remove dislike
+      video.dislikes.pull(userId);
+    } else {
+      // Add dislike and remove like if exists
+      video.dislikes.push(userId);
+      video.likes.pull(userId);
+    }
+
+    await video.save();
+
+    res.status(200).json({
+      success: true,
+      likes: video.likes.length,
+      dislikes: video.dislikes.length,
     });
   } catch (error) {
     res.status(500).json({

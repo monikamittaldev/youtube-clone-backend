@@ -1,7 +1,9 @@
 import {
     deleteVideo,
+  dislikeVideo,
   getAllVideos,
   getVideoById,
+  likeVideo,
   updateVideo,
   uploadVideo,
 } from "../controllers/video.controller.js";
@@ -13,4 +15,6 @@ export function videoRoutes(app) {
   app.post("/api/videos", protect, uploadVideo);
   app.put("/api/videos/:id", protect, updateVideo);
   app.delete("/api/videos/:id", protect, deleteVideo);
+  app.post("/api/videos/:id/like", protect, likeVideo);
+  app.post("/api/videos/:id/dislike", protect, dislikeVideo);
 }
