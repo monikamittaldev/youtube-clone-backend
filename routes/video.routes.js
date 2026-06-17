@@ -1,4 +1,5 @@
 import {
+    deleteVideo,
   getAllVideos,
   getVideoById,
   updateVideo,
@@ -11,4 +12,5 @@ export function videoRoutes(app) {
   app.get("/api/videos/:id", getVideoById);
   app.post("/api/videos", protect, uploadVideo);
   app.put("/api/videos/:id", protect, updateVideo);
+  app.delete("/api/videos/:id", protect, deleteVideo);
 }

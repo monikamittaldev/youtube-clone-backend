@@ -178,3 +178,46 @@ export const updateVideo = async (req, res) => {
     });
   }
 };
+
+
+/* =========================================================================
+   DELETE VIDEO - DELETE /api/videos/:id
+   ========================================================================= */
+export const deleteVideo = async (req, res) => {
+  try {
+    // Find video
+    const video = await Video.findById(req.params.id);
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    // Check ownership
+    if (video.uploader.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this video",
+      });
+    }
+
+    // Remove video from channel
+    await Channel.findByIdAndUpdate(video.channelId, {
+      $pull: { videos: video._id },
+    });
+
+    // Delete video
+    await video.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Video deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
