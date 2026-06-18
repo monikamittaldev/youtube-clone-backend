@@ -17,6 +17,7 @@ import cors from "cors";
 import { authRoutes } from "./routes/auth.routes.js";
 import { channelRoutes } from "./routes/channel.routes.js";
 import { videoRoutes } from "./routes/video.routes.js";
+import { commentRoutes } from "./routes/comment.routes.js";
 
 // Create an Express application instance
 const app = express();
@@ -50,6 +51,7 @@ db.on("error", (err) => {
 authRoutes(app);
 channelRoutes(app);
 videoRoutes(app);
+commentRoutes(app);
 /* =========================================================================
    2. START THE SERVER
    ========================================================================= */
