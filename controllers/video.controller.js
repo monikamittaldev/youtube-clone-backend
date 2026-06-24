@@ -30,7 +30,7 @@ export const getAllVideos = async (req, res) => {
     res.status(200).json({
       success: true,
       count: videos.length,
-      videos,
+      data: videos,
     });
   } catch (error) {
     res.status(500).json({
@@ -60,7 +60,7 @@ export const getVideoById = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      video,
+      data : video,
     });
   } catch (error) {
     res.status(500).json({
