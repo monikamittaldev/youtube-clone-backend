@@ -17,7 +17,7 @@ const generateToken = (id) => {
    ========================================================================= */
 export const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password,avatar } = req.body;
 
     // Validate required fields
     if (!username || !email || !password) {

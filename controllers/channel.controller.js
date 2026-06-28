@@ -68,8 +68,12 @@ export const getChannel = async (req, res) => {
   try {
     const channel = await Channel.findById(req.params.id)
       .populate("owner", "username avatar")
-      .populate("videos");
-
+      .populate({
+        path: "videos",
+        options: {
+          sort: { createdAt: -1 }, // Newest first
+        },
+      });
     if (!channel) {
       return res.status(404).json({
         success: false,

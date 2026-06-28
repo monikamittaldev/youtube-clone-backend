@@ -6,6 +6,23 @@ import Video from "../models/video.model.js";
 import User from "../models/user.model.js";
 
 /* =========================================================================
+   GET COMMENT - POST /api/comments/:videoId
+   ========================================================================= */
+
+export const getComments = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.videoId).select("comments");
+    if (!video) {
+      return res.status(404).json({ success: false, message: "Video not found" });
+    }
+    // Return comments newest first
+    const comments = [...video.comments].reverse();
+    res.json({ success: true, comments });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+/* =========================================================================
    ADD COMMENT - POST /api/comments/:videoId
    ========================================================================= */
 export const addComment = async (req, res) => {
