@@ -23,6 +23,9 @@ import { channelRoutes } from "./routes/channel.routes.js";
 import { videoRoutes } from "./routes/video.routes.js";
 import { commentRoutes } from "./routes/comment.routes.js";
 
+import { fileURLToPath } from "url";
+import path from "path";
+
 // Create an Express application instance
 const app = express();
 
@@ -32,6 +35,11 @@ const PORT = process.env.PORT || 5000;
 // Middleware to parse incoming JSON payloads (Essential for handling req.body)
 app.use(express.json());
 app.use(cors());
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* =========================================================================
    1. DATABASE CONNECTION (MongoDB via Mongoose)
