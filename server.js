@@ -1,8 +1,12 @@
+import dns from 'node:dns';
+// Bypass local DNS SRV block (remove in production)
+dns.setServers(['1.1.1.1', '8.8.8.8']);
+
+
 /* =========================================================================
    server.js - RESTful API for User Management
    Built with Node.js, Express & MongoDB
    ========================================================================= */
-
 import "./models/user.model.js";
 import "./models/video.model.js";
 import "./models/channel.model.js";
