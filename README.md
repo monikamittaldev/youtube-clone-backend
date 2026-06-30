@@ -1,6 +1,6 @@
-# 🎬 ViewTube Backend API
+# 🎬 YouTube Clone Backend API
 
-> RESTful API for ViewTube — a YouTube Clone built with Node.js, Express.js, MongoDB Atlas and JWT Authentication.
+> RESTful API for a YouTube Clone built with Node.js, Express.js, MongoDB Atlas, JWT Authentication, and Multer for file uploads.
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green)
 ![Express](https://img.shields.io/badge/Express-4.x-blue)
@@ -37,8 +37,12 @@ youtube-clone-backend/
 │   ├── channel.routes.js
 │   └── comment.routes.js
 │
-└── middleware/
-    └── auth.middleware.js       ← JWT protect() function
+├── middleware/
+│   ├── authMiddleware.js        ← JWT authentication middleware
+│   └── upload.js                ← Multer configuration for file uploads
+│
+└── uploads/
+    └── avatars/                 ← Uploaded user & channel avatars
 ```
 
 ---
@@ -51,26 +55,44 @@ youtube-clone-backend/
 | mongoose | MongoDB ODM and schema validation |
 | jsonwebtoken | JWT token generation and verification |
 | bcryptjs | Password hashing |
+| multer | Handles avatar image uploads |
 | dotenv | Environment variable management |
 | cors | Cross-origin resource sharing |
 | nodemon | Auto-restart during development |
 
 ---
 
+## 📁 File Uploads
+
+This project uses **Multer** middleware to handle `multipart/form-data` uploads.
+
+Supported uploads include:
+
+- User avatar during registration
+- Channel avatar during channel creation
+- Channel avatar updates
+
+Uploaded files are stored locally inside the `uploads/` directory.
+
+---
+
 ## 🚀 Setup & Installation
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/monikamittal-1728/youtube-clone-backend
 cd youtube-clone-backend
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Create .env file
+
 ```env
 PORT=5000
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/youtube-clone?retryWrites=true&w=majority
@@ -79,18 +101,20 @@ JWT_EXPIRES_IN=7d
 ```
 
 ### 4. Seed the database
+
 ```bash
 node seed.js
 ```
 
 **Test credentials after seeding:**
 
-| Field    | Value               |
-|----------|---------------------|
-| Email    | monika@example.com  |
-| Password | monika123           |
+| Field | Value |
+|-------|-------|
+| Email | monika@example.com |
+| Password | monika123 |
 
 ### 5. Start the server
+
 ```bash
 # Development
 npm run dev
@@ -109,7 +133,7 @@ npm start
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | `/api/auth/register` | Public | Register new user |
+| POST | `/api/auth/register` | Public | Register new user with avatar upload |
 | POST | `/api/auth/login` | Public | Login and get JWT token |
 | GET | `/api/auth/me` | Protected | Get current user |
 
@@ -129,9 +153,9 @@ npm start
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | `/api/channel` | Protected | Create channel (1 per user) |
+| POST | `/api/channel` | Protected | Create channel with avatar upload |
 | GET | `/api/channel/:id` | Public | Get channel with videos |
-| PUT | `/api/channel/:id` | Protected | Update channel (owner only) |
+| PUT | `/api/channel/:id` | Protected | Update channel details and avatar |
 
 ### 💬 Comments — `/api/comments`
 
@@ -146,16 +170,19 @@ npm start
 ## 📝 Request Examples
 
 ### Register
-```json
+
+```text
 POST /api/auth/register
-{
-  "username": "Monika",
-  "email": "monika@example.com",
-  "password": "monika123"
-}
+Content-Type: multipart/form-data
+
+username: Monika
+email: monika@example.com
+password: monika123
+avatar: profile.jpg
 ```
 
 ### Login
+
 ```json
 POST /api/auth/login
 {
@@ -165,6 +192,7 @@ POST /api/auth/login
 ```
 
 ### Upload Video
+
 ```json
 POST /api/videos
 Authorization: Bearer <token>
@@ -180,6 +208,7 @@ Authorization: Bearer <token>
 ```
 
 ### Add Comment
+
 ```json
 POST /api/comments/:videoId
 Authorization: Bearer <token>
@@ -194,6 +223,7 @@ Authorization: Bearer <token>
 ## 🗄️ Database Models
 
 ### User
+
 | Field | Type | Details |
 |-------|------|---------|
 | username | String | Required, unique, min 5 chars |
@@ -203,6 +233,7 @@ Authorization: Bearer <token>
 | channel | ObjectId | Ref to Channel |
 
 ### Video
+
 | Field | Type | Details |
 |-------|------|---------|
 | title | String | Required |
@@ -217,11 +248,13 @@ Authorization: Bearer <token>
 | comments | [SubDoc] | Embedded comments |
 
 ### Channel
+
 | Field | Type | Details |
 |-------|------|---------|
 | channelName | String | Required |
 | handle | String | Unique, auto-generated |
 | description | String | Optional |
+| channelAvatar | String | Optional |
 | owner | ObjectId | Unique — 1 channel per user |
 | videos | [ObjectId] | Array of Video IDs |
 
@@ -237,8 +270,9 @@ Authorization: Bearer <token>
 
 - Passwords hashed with **bcryptjs** (12 salt rounds)
 - JWT tokens expire after **7 days**
-- All write routes require valid JWT token
-- Ownership verified before update/delete
+- All protected routes require a valid JWT token
+- Ownership verified before update/delete operations
+- Avatar uploads handled securely using **Multer**
 - `.env` never committed to GitHub
 
 ---
