@@ -284,7 +284,22 @@ npm run dev     # Development with nodemon
 npm start       # Production
 node seed.js    # Seed database
 ```
-
 ---
+
+## ⚠️ Important Note – MongoDB Atlas DNS Fix
+
+If you encounter an **`ECONNREFUSED`** or MongoDB Atlas connection error caused by DNS resolution, add the following code at the top of `server.js` **before** `dotenv.config()`:
+
+```javascript
+import dns from "node:dns";
+
+// Bypass local DNS SRV block (remove in production)
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+```
+
+This workaround is useful when your ISP or local network blocks MongoDB Atlas SRV DNS queries. It configures Node.js to use Cloudflare (`1.1.1.1`) and Google (`8.8.8.8`) DNS servers for resolving MongoDB Atlas connections.
+
+> **Note:** This is intended as a development workaround. For production deployments, use your hosting provider's default DNS configuration unless you have a specific reason to override it.
+
 
 *Built with ❤️ by Monika — Internshala Full Stack Web Development Capstone Project*
