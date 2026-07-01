@@ -10,12 +10,15 @@
 
 ---
 
+git checkout main
 ## 📁 Folder Structure
 
 ```
 youtube-clone-backend/
 ├── server.js                    ← Express app entry point
-├── seed.js                      ← Database seeder (10 sample videos)
+├── seed.js                     
+
+ ← Database seeder (10 sample videos)
 ├── package.json                 ← Dependencies + "type": "module"
 ├── .env.example                 ← Environment variable template
 ├── .gitignore
