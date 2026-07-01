@@ -89,8 +89,12 @@ cd youtube-clone-backend
 ```bash
 npm install
 ```
+### 3. Environment variables
+A working `.env` file is already included in this repo for evaluation purposes. 
 
-### 3. Create .env file
+Later 
+
+Create .env file
 
 ```env
 PORT=5000
@@ -275,7 +279,7 @@ Authorization: Bearer <token>
 - All protected routes require a valid JWT token
 - Ownership verified before update/delete operations
 - Avatar uploads handled securely using **Multer**
-- `.env` is git-ignored — use `.env.example` as a template and supply your own values
+- `.env` is committed with working credentials so evaluators can run the project without setup — these will be rotated after grading
 
 ---
 
