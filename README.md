@@ -15,7 +15,7 @@
 ```
 youtube-clone-backend/
 ├── server.js                    ← Express app entry point
-├── seed.js                      ← Database seeder (12 sample videos)
+├── seed.js                      ← Database seeder (10 sample videos)
 ├── package.json                 ← Dependencies + "type": "module"
 ├── .env.example                 ← Environment variable template
 ├── .gitignore
@@ -41,8 +41,7 @@ youtube-clone-backend/
 │   ├── authMiddleware.js        ← JWT authentication middleware
 │   └── upload.js                ← Multer configuration for file uploads
 │
-└── uploads/
-    └── avatars/                 ← Uploaded user & channel avatars
+└── uploads/                     ← Uploaded user & channel avatars (flat, filename-prefixed with timestamp)
 ```
 
 ---
@@ -81,7 +80,7 @@ Uploaded files are stored locally inside the `uploads/` directory.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/monikamittal-1728/youtube-clone-backend
+git clone https://github.com/monikamittaldev/youtube-clone-backend
 cd youtube-clone-backend
 ```
 
@@ -95,10 +94,12 @@ npm install
 
 ```env
 PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/youtube-clone?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/youtube-clone?retryWrites=true&w=majority
 JWT_SECRET=your_super_secret_key
 JWT_EXPIRES_IN=7d
 ```
+
+> A `.env.example` with these same variable names (no real values) is included in the repo for reference.
 
 ### 4. Seed the database
 
@@ -255,6 +256,7 @@ Authorization: Bearer <token>
 | handle | String | Unique, auto-generated |
 | description | String | Optional |
 | channelAvatar | String | Optional |
+| channelBanner | String | Optional |
 | owner | ObjectId | Unique — 1 channel per user |
 | videos | [ObjectId] | Array of Video IDs |
 
@@ -273,7 +275,7 @@ Authorization: Bearer <token>
 - All protected routes require a valid JWT token
 - Ownership verified before update/delete operations
 - Avatar uploads handled securely using **Multer**
-- `.env` never committed to GitHub
+- `.env` is git-ignored — use `.env.example` as a template and supply your own values
 
 ---
 
